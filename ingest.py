@@ -5,6 +5,8 @@ from langchain.vectorstores import FAISS
 
 DATA_PATH = "data/"
 DB_FAISS_PATH = "vectorstores/"
+DPATH = ""
+DBPATH = ""
 lst_books = [
     "aud",
     "sbks",
@@ -36,37 +38,73 @@ lst_HFBE = [
     "BAAI/bge-large-en"
 ]
 
+def extractEMB(string):
+  last_slash_index = string.rfind("/")
+  if last_slash_index == -1:
+    return ""
+  else:
+    return string[last_slash_index + 1:]
+
 def create_vector_db():
 
-    loader = DirectoryLoader(DATA_PATH, glob='*.pdf', loader_cls=PyPDFLoader)
-    documents = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=128)
-    texts = text_splitter.split_documents(documents)
+    for bk in lst_books:
+        for emb in lst_HFIE:
+            DPATH = DATA_PATH + bk
+            print(DPATH + + "_:_" + extractEMB(emb) + " is being generated .... \n")
+            loader = DirectoryLoader(DPATH, glob='*.pdf', loader_cls=PyPDFLoader)
+            documents = loader.load()
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=128)
+            texts = text_splitter.split_documents(documents)
 
-    #embeddings = HuggingFaceInstructEmbeddings(
-    #    model_name='hkunlp/instructor-xl')
+            embeddings = HuggingFaceInstructEmbeddings(model_name=emb)
 
-    #embeddings = HuggingFaceEmbeddings(
-    #    model_name='sentence-transformers/all-MiniLM-L6-v2',
-    #    model_kwargs = {'device': 'cpu'}
-    #)
+            db = FAISS.from_documents(texts, embeddings)
 
-    embeddings = HuggingFaceEmbeddings(
-        model_name='thenlper/gte-large', #nreimers/MiniLM-L6-H384-uncased, thenlper/gte-base,small,large
-        model_kwargs = {'device': 'cpu'} #microsoft/MiniLM-L12-H384-uncased
-    )
+            DB_PATH = DB_FAISS_PATH + bk + "___" + extractEMB(emb)
+            db.save_local(DB_PATH)
 
-    #model_name = "BAAI/bge-large-en" #small
-    #model_kwargs = {'device': 'cpu'}
-    #encode_kwargs = {'normalize_embeddings': True} # set True to compute cosine similarity
-    #embeddings = HuggingFaceBgeEmbeddings(
-    #    model_name=model_name,
-    #    model_kwargs=model_kwargs,
-    #    encode_kwargs=encode_kwargs
-    #)
+        for emb in lst_HFE:
+            DPATH = DATA_PATH + bk + "___" + extractEMB(emb)
+            print(DPATH + " is being generated .... \n")
+            loader = DirectoryLoader(DPATH, glob='*.pdf', loader_cls=PyPDFLoader)
+            documents = loader.load()
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=128)
+            texts = text_splitter.split_documents(documents)
+
+            embeddings = HuggingFaceEmbeddings(
+               model_name=emb,
+               model_kwargs = {'device': 'cpu'}
+            )
+
+            db = FAISS.from_documents(texts, embeddings)
+
+            DB_PATH = DB_FAISS_PATH + bk + "___" + extractEMB(emb)
+            db.save_local(DB_PATH)
+
+        for emb in lst_HFBE:
+            DPATH = DATA_PATH + bk + "___" + extractEMB(emb)
+            print(DPATH + " is being generated .... \n")
+            loader = DirectoryLoader(DPATH, glob='*.pdf', loader_cls=PyPDFLoader)
+            documents = loader.load()
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=128)
+            texts = text_splitter.split_documents(documents)
+
+            model_kwargs = {'device': 'cpu'}
+            encode_kwargs = {'normalize_embeddings': True}
+            embeddings = HuggingFaceBgeEmbeddings(
+                model_name=emb,
+                model_kwargs=model_kwargs,
+                encode_kwargs=encode_kwargs
+            )
+
+            db = FAISS.from_documents(texts, embeddings)
+
+            DB_PATH = DB_FAISS_PATH + bk + "___" + extractEMB(emb)
+            db.save_local(DB_PATH)
+
+
+
     
-    db = FAISS.from_documents(texts, embeddings)
-    db.save_local(DB_FAISS_PATH)
 
 if __name__ == '__main__':
     create_vector_db()
