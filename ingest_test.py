@@ -2,6 +2,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain.embeddings import HuggingFaceInstructEmbeddings, HuggingFaceEmbeddings, HuggingFaceBgeEmbeddings
 from langchain.vectorstores import FAISS
+from datetime import datetime
 
 DATA_PATH = "data/"
 DB_FAISS_PATH = "vectorstores/"
@@ -48,21 +49,34 @@ def extractEMB(string):
 def create_vector_db():
     DPATH = DATA_PATH + "sbks_bg_sb_cc"
     print(DPATH + + "_:_" + "hkunlp/instructor-xl" + " is being generated .... \n")
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print("Current Time =", current_time)
     loader = DirectoryLoader(DPATH, glob='*.pdf', loader_cls=PyPDFLoader)
     documents = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=128)
     texts = text_splitter.split_documents(documents)
 
     print("loaded all the document ...")
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print("Current Time =", current_time)
 
     embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl")
 
     print("creating embeddings and storing in cpu memory of db ...")
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print("Current Time =", current_time)
 
     db = FAISS.from_documents(texts, embeddings)
 
     DB_PATH = DB_FAISS_PATH + "sbks_bg_sb_cc" + "___" + "instructor-xl"
     db.save_local(DB_PATH)
+
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print("Current Time =", current_time)
 
 
 
