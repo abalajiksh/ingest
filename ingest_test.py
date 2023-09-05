@@ -47,8 +47,8 @@ def extractEMB(string):
     return string[last_slash_index + 1:]
 
 def create_vector_db():
-    DPATH = DATA_PATH + "sbks_bg_sb_cc"
-    print(DPATH + + "_:_" + "hkunlp/instructor-xl" + " is being generated .... \n")
+    DPATH = DATA_PATH + "sbks_bg_sb_cc_aud"
+    print(DPATH + "__" + "hkunlp/instructor-xl" + " is being generated .... \n")
     now = datetime.now()
     current_time = now.strftime("%H:%M:%S")
     print("Current Time =", current_time)

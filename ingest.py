@@ -50,7 +50,7 @@ def create_vector_db():
     for bk in lst_books:
         for emb in lst_HFIE:
             DPATH = DATA_PATH + bk
-            print(DPATH + + "_:_" + extractEMB(emb) + " is being generated .... \n")
+            print(DPATH + "__" + extractEMB(emb) + " is being generated .... \n")
             loader = DirectoryLoader(DPATH, glob='*.pdf', loader_cls=PyPDFLoader)
             documents = loader.load()
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=128)
@@ -64,8 +64,8 @@ def create_vector_db():
             db.save_local(DB_PATH)
 
         for emb in lst_HFE:
-            DPATH = DATA_PATH + bk + "___" + extractEMB(emb)
-            print(DPATH + " is being generated .... \n")
+            DPATH = DATA_PATH + bk
+            print(DPATH + "__" + extractEMB(emb) + " is being generated .... \n")
             loader = DirectoryLoader(DPATH, glob='*.pdf', loader_cls=PyPDFLoader)
             documents = loader.load()
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=128)
@@ -82,8 +82,8 @@ def create_vector_db():
             db.save_local(DB_PATH)
 
         for emb in lst_HFBE:
-            DPATH = DATA_PATH + bk + "___" + extractEMB(emb)
-            print(DPATH + " is being generated .... \n")
+            DPATH = DATA_PATH + bk
+            print(DPATH + "__" + extractEMB(emb) + " is being generated .... \n")
             loader = DirectoryLoader(DPATH, glob='*.pdf', loader_cls=PyPDFLoader)
             documents = loader.load()
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=128)
