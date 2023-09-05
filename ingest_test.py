@@ -53,7 +53,11 @@ def create_vector_db():
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=128)
     texts = text_splitter.split_documents(documents)
 
+    print("loaded all the document ...")
+
     embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl")
+
+    print("creating embeddings and storing in cpu memory of db ...")
 
     db = FAISS.from_documents(texts, embeddings)
 
